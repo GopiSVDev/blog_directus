@@ -3,11 +3,15 @@ import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Blog App" },
+    { name: "description", content: "Create or View Blogs" },
   ];
 }
 
 export default function Home() {
-  return <Text c="">App</Text>;
+  return (
+    <div>
+      <h1>All Published Blogs</h1>
+    </div>
+  );
 }
