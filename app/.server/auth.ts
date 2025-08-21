@@ -9,16 +9,35 @@ interface RegisterData {
   password: string;
 }
 
+interface LoginData {
+  email: string;
+  password: string;
+}
+
 export const register = async (data: RegisterData) => {
   try {
     const res = await axios.post(`${API_URL}/users/register`, data);
     return res.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
-      console.error("Register error:", error.response?.data || error.message);
+      return (
+        error.response?.data?.errors?.[0]?.message || "Registration failed"
+      );
     } else {
-      console.error("Register error:", error);
+      return "Something went wrong. Please try again.";
     }
-    throw error;
+  }
+};
+
+export const login = async (data: LoginData) => {
+  try {
+    const res = await axios.post(`${API_URL}/auth/login`, data);
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return error.response?.data?.errors?.[0]?.message || "Login failed";
+    } else {
+      return "Something went wrong. Please try again.";
+    }
   }
 };
