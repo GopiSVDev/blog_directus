@@ -1,43 +1,49 @@
-import axios from "axios";
+import { registerUser, isDirectusError } from "@directus/sdk";
+import type { AuthenticationData } from "@directus/sdk";
+import { authClient, client } from "~/.server/directus";
 
 const API_URL = process.env.DIRECTUS_URL;
 
-interface RegisterData {
-  first_name: string;
-  last_name: string;
+interface AuthData {
   email: string;
   password: string;
 }
 
-interface LoginData {
-  email: string;
-  password: string;
-}
+export const register = async (data: AuthData) => {
+  const { email, password } = data;
 
-export const register = async (data: RegisterData) => {
   try {
-    const res = await axios.post(`${API_URL}/users/register`, data);
-    return res.data;
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      return (
-        error.response?.data?.errors?.[0]?.message || "Registration failed"
-      );
-    } else {
-      return "Something went wrong. Please try again.";
+    await client.request(registerUser(email, password));
+  } catch (error) {
+    if (isDirectusError(error)) {
+      return error.errors?.[0]?.message || "Something went wrong with Directus";
     }
+
+    if (error instanceof Error) {
+      return error.message;
+    }
+
+    return "Registration failed";
   }
 };
 
-export const login = async (data: LoginData) => {
+export const login = async (data: AuthData): Promise<AuthenticationData> => {
+  const { email, password } = data;
+
   try {
-    const res = await axios.post(`${API_URL}/auth/login`, data);
-    return res.data;
+    const res = await authClient.login({ email, password });
+    return res;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return error.response?.data?.errors?.[0]?.message || "Login failed";
-    } else {
-      return "Something went wrong. Please try again.";
+    if (isDirectusError(error)) {
+      throw new Error(
+        error.errors?.[0]?.message || "Something went wrong with Directus"
+      );
     }
+
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+
+    throw new Error("Login Failed");
   }
 };

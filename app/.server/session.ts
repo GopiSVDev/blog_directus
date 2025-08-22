@@ -3,6 +3,7 @@ import { createCookieSessionStorage } from "react-router";
 type SessionData = {
   accessToken: string;
   refreshToken: string;
+  expiresAt: number;
 };
 
 type SessionFlashData = {
