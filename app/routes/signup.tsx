@@ -1,6 +1,17 @@
 import { Form, redirect } from "react-router";
 import type { Route } from "../+types/root";
 import { register } from "~/.server/auth";
+import { getUserSession } from "~/.server/session";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const { loggedIn, headers } = await getUserSession(request);
+
+  if (loggedIn) {
+    return redirect("/dashboard", headers);
+  }
+
+  return null;
+}
 
 export async function action({ request }: Route.ActionArgs) {
   let formData = await request.formData();

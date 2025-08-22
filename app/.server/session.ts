@@ -1,4 +1,5 @@
 import { createCookieSessionStorage } from "react-router";
+import { authClient } from "./directus";
 
 type SessionData = {
   accessToken: string;
@@ -23,4 +24,40 @@ const { getSession, commitSession, destroySession } =
     },
   });
 
-export { getSession, commitSession, destroySession };
+async function getUserSession(request: Request) {
+  const session = await getSession(request.headers.get("Cookie"));
+
+  const accessToken = session.get("accessToken") as string | undefined;
+  const refreshToken = session.get("refreshToken") as string | undefined;
+  const expiresAt = session.get("expiresAt") as number | undefined;
+
+  let headers: Record<string, string> | undefined;
+
+  if (!accessToken || !refreshToken) {
+    return { session, loggedIn: false };
+  }
+
+  if (!expiresAt || Date.now() > expiresAt) {
+    try {
+      const refreshed = await authClient.refresh({
+        refresh_token: refreshToken,
+      });
+
+      session.set("accessToken", refreshed.access_token ?? "");
+      session.set("refreshToken", refreshed.refresh_token ?? "");
+      session.set("expiresAt", refreshed.expires_at ?? 0);
+    } catch {
+      await destroySession(session);
+      return {
+        session,
+        loggedIn: false,
+        headers: { "Set-Cookie": await commitSession(session) },
+      };
+    }
+  }
+
+  headers = { "Set-Cookie": await commitSession(session) };
+  return { session, loggedIn: true, headers };
+}
+
+export { getSession, commitSession, destroySession, getUserSession };
