@@ -2,8 +2,6 @@ import { registerUser, isDirectusError } from "@directus/sdk";
 import type { AuthenticationData } from "@directus/sdk";
 import { authClient, client } from "~/.server/directus";
 
-const API_URL = process.env.DIRECTUS_URL;
-
 interface AuthData {
   email: string;
   password: string;

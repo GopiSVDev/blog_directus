@@ -3,8 +3,6 @@ import { Link, useLoaderData } from "react-router";
 const Navbar = () => {
   const { loggedIn } = useLoaderData();
 
-  console.log(loggedIn);
-
   return (
     <nav
       style={{
