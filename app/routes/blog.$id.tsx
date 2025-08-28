@@ -1,52 +1,81 @@
-import { getBlogById, type Blog } from "~/.server/blogs";
+import { getBlogById } from "~/.server/blogs";
 import type { Route } from "../+types/root";
-import { useNavigate } from "react-router";
+import { redirect, useNavigate } from "react-router";
+import type { FullBlog } from "~/types/blog";
+import {
+  Badge,
+  Button,
+  Card,
+  Container,
+  Divider,
+  Group,
+  Image,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 
 export async function loader({ params }: Route.LoaderArgs) {
-  if (!params.id) return;
+  try {
+    if (!params.id) return redirect("/");
 
-  const blog = await getBlogById(params.id);
+    const blog = await getBlogById(parseInt(params.id));
 
-  return blog;
+    if (!blog) return redirect("/");
+
+    return blog;
+  } catch (error) {
+    console.error("Failed to load blog:", error);
+    return redirect("/");
+  }
 }
 
-const BlogPage = ({ loaderData }: { loaderData: Blog | undefined }) => {
+const BlogPage = ({ loaderData }: { loaderData: FullBlog | undefined }) => {
   const navigate = useNavigate();
   const blog = loaderData;
 
   if (!blog) return <>Blog Not Found</>;
 
   return (
-    <div style={{ border: "1px solid #ccc", padding: "1rem" }}>
-      <button onClick={() => navigate(-1)}>Back</button>
-      <h1>{blog.title}</h1>
-      <p>{blog.content}</p>
-      <div>
-        <strong>Author ID:</strong> {blog.author}
-      </div>
-      <div>
-        <strong>Status:</strong> {blog.status}
-      </div>
-      <div>
-        <strong>User Created:</strong> {blog.user_created}
-      </div>
-      <div>
-        <strong>Date Created:</strong>{" "}
-        {new Date(blog.date_created).toLocaleString()}
-      </div>
-      <div>
-        <strong>User Updated:</strong> {blog.user_updated ?? "N/A"}
-      </div>
-      <div>
-        <strong>Date Updated:</strong>{" "}
-        {blog.date_updated
-          ? new Date(blog.date_updated).toLocaleString()
-          : "N/A"}
-      </div>
-      <div>
-        <strong>ID:</strong> {blog.id}
-      </div>
-    </div>
+    <Container size="md" py="xl">
+      <Button variant="outline" mb="md" onClick={() => navigate(-1)}>
+        Back
+      </Button>
+
+      <Card shadow="sm" radius="md" p="lg">
+        {blog.imageUrl && (
+          <Image
+            src={blog.imageUrl}
+            alt={blog.title}
+            height={400}
+            mb="md"
+            radius="md"
+            fit="cover"
+          />
+        )}
+
+        <Stack gap="sm">
+          <Group align="center">
+            <Title order={2}>{blog.title}</Title>
+            <Badge
+              color={blog.status === "published" ? "green" : "gray"}
+              variant="light"
+            >
+              {blog.status === "published" ? "Published" : "Draft"}
+            </Badge>
+          </Group>
+
+          <Text c="dimmed" size="sm">
+            By {"{"} Author Name {"}"} |{" "}
+            {new Date(blog.date_created).toLocaleDateString()}
+          </Text>
+
+          <Divider my="sm" />
+
+          <Text>{blog.content}</Text>
+        </Stack>
+      </Card>
+    </Container>
   );
 };
 

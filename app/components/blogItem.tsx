@@ -55,7 +55,9 @@ const BlogItem = ({ blog }: { blog: FullBlog }) => {
               <RxAvatar />
             </Avatar>
             <div>
-              <Text fw={500}>{blog.author}</Text>
+              <Text fw={500}>
+                By {"{"} Author Name {"}"}
+              </Text>
               <Text fz="xs" c="gray">
                 {blog.date_created}
               </Text>

@@ -1,4 +1,4 @@
-import { authClient } from "./directus";
+import { authClient, client } from "./directus";
 import {
   createItem,
   deleteItem,
@@ -8,7 +8,7 @@ import {
   updateItem,
 } from "@directus/sdk";
 import { getUserSession } from "./session";
-import type { BlogPost } from "~/types/blog";
+import type { BlogPost, FullBlog } from "~/types/blog";
 
 async function getAccessToken(request: Request) {
   const { session } = await getUserSession(request);
@@ -29,13 +29,26 @@ async function getCurrentUser() {
   }
 }
 
-export async function fetchBlogs(request: Request) {
+export async function fetchAllBlogs() {
+  try {
+    const res = await client.request(
+      readItems("blogs", { filter: { status: { _eq: "published" } } })
+    );
+
+    return res as FullBlog[] | [];
+  } catch (err) {
+    console.error("Failed to fetch blogs", err);
+    throw new Error("An error occurred while fetching blogs.");
+  }
+}
+
+export async function fetchUserBlogs(request: Request) {
   await getAccessToken(request);
 
   const currentUser = await getCurrentUser();
   try {
     return await authClient.request(
-      readItems("blogs", { filter: { userId: { _eq: currentUser.id } } })
+      readItems("blogs", { filter: { author: { _eq: currentUser.id } } })
     );
   } catch (err) {
     console.error("Failed to fetch blogs", err);
@@ -45,7 +58,9 @@ export async function fetchBlogs(request: Request) {
 
 export async function getBlogById(id: number) {
   try {
-    return await authClient.request(readItem("blogs", id));
+    return await client.request(
+      readItem("blogs", id, { filter: { status: { _eq: "published" } } })
+    );
   } catch (err) {
     console.error(`Failed to fetch blogs with ID ${id}`, err);
     throw new Error("An error occurred while fetching the blogs.");

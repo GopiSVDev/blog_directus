@@ -17,7 +17,7 @@ export default [
     ...prefix("dashboard", [
       index("routes/dashboard/dashboard.tsx"),
       route("create", "routes/dashboard/dashboard.create.tsx"),
-      route("edit", "routes/dashboard/dashboard.edit.$id.tsx"),
+      route("edit/:id", "routes/dashboard/dashboard.edit.$id.tsx"),
     ]),
   ]),
 ] satisfies RouteConfig;

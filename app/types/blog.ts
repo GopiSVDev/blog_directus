@@ -1,5 +1,5 @@
 export interface BlogPost {
-  imageUrl: string;
+  imageUrl?: string;
   title: string;
   content: string;
   author: string;
@@ -11,7 +11,7 @@ export interface FullBlog extends BlogPost {
   date_created: string;
 }
 
-type BlogStatus = "draft" | "published";
+export type BlogStatus = "draft" | "published";
 
 export const blogs: FullBlog[] = [
   {
@@ -152,7 +152,7 @@ Adopting mindfulness techniques allows busy professionals to create balance amid
   },
   {
     id: 10,
-    imageUrl: "https://picsum.photos/id/1092/800/400",
+    imageUrl: undefined,
     title: "Building Scalable APIs with Node.js",
     content: `
 Node.js provides a powerful platform for building scalable and efficient APIs. 
