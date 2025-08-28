@@ -1,5 +1,4 @@
 import {
-  ActionIcon,
   AspectRatio,
   Avatar,
   Badge,
@@ -25,18 +24,21 @@ const BlogItem = ({ blog }: { blog: FullBlog }) => {
         shadow="lg"
         w="100%"
         maw="384px"
-        miw="343px"
         mah="580px"
         mih="530px"
       >
         <CardSection>
           <AspectRatio ratio={2 / 1}>
-            <Image src={blog.imageUrl} />
+            <Image src={blog.imageUrl} alt="Image Not Available" />
           </AspectRatio>
         </CardSection>
 
-        <Badge variant="light" my="sm">
-          {blog.status}
+        <Badge
+          variant="light"
+          my="sm"
+          color={blog.status === "published" ? "green" : "gray"}
+        >
+          {blog.status === "published" ? "Published" : "Draft"}
         </Badge>
 
         <Text my="sm" fw={600}>

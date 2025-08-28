@@ -1,7 +1,7 @@
 import BlogItem from "~/components/blogItem";
 import type { Route } from "./+types/home";
 import { blogs } from "~/types/blog";
-import { Box, Grid, Text, Title } from "@mantine/core";
+import { Box, Text, Title } from "@mantine/core";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -18,7 +18,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
       </Title>
 
       {blogs?.length === 0 ? (
-        <p>No Blogs</p>
+        <Text ta="center">No Blogs</Text>
       ) : (
         <Box
           style={{

@@ -9,9 +9,9 @@ import {
 export default [
   layout("layout/mainLayout.tsx", [
     index("routes/home.tsx"),
-    route("signup", "routes/signup.tsx"),
-    route("login", "routes/login.tsx"),
-    route("logout", "routes/logout.tsx"),
+    route("signup", "routes/auth/signup.tsx"),
+    route("login", "routes/auth/login.tsx"),
+    route("logout", "routes/auth/logout.tsx"),
     route("blog/:id", "routes/blog.$id.tsx"),
 
     ...prefix("dashboard", [
