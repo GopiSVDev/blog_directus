@@ -1,34 +1,84 @@
-import { readItem, readItems } from "@directus/sdk";
-import { client } from "./directus";
+import { authClient } from "./directus";
+import {
+  createItem,
+  deleteItem,
+  readItem,
+  readItems,
+  readMe,
+  updateItem,
+} from "@directus/sdk";
+import { getUserSession } from "./session";
+import type { BlogPost } from "~/types/blog";
 
-export interface Blog {
-  id: string;
-  title: string;
-  content: string;
-  author: string;
-  status: string;
-  user_created: string;
-  date_created: Date;
-  user_updated: string;
-  date_updated: Date;
+async function getAccessToken(request: Request) {
+  const { session } = await getUserSession(request);
+  if (!session) throw new Error("Not logged in");
+
+  const accessToken = session.get("accessToken");
+  if (!accessToken) throw new Error("Not logged in");
+
+  authClient.setToken(accessToken);
+  return accessToken;
 }
 
-export const getAllBlogs = async (): Promise<Blog[]> => {
+async function getCurrentUser() {
   try {
-    const res = (await client.request(readItems("blogs"))) as Blog[];
-    return res;
-  } catch (error) {
-    console.error("Failed to fetch blogs:", error);
-    return [];
+    return await authClient.request(readMe());
+  } catch (err) {
+    throw new Error("Failed to fetch current user.");
   }
-};
+}
 
-export const getBlogById = async (id: string): Promise<Blog | undefined> => {
+export async function fetchBlogs(request: Request) {
+  await getAccessToken(request);
+
+  const currentUser = await getCurrentUser();
   try {
-    const res = (await client.request(readItem("blogs", id))) as Blog;
-    return res;
-  } catch (error) {
-    console.error("Failed to fetch blogs:", error);
-    return undefined;
+    return await authClient.request(
+      readItems("blogs", { filter: { userId: { _eq: currentUser.id } } })
+    );
+  } catch (err) {
+    console.error("Failed to fetch blogs", err);
+    throw new Error("An error occurred while fetching blogs.");
   }
-};
+}
+
+export async function getBlogById(id: number) {
+  try {
+    return await authClient.request(readItem("blogs", id));
+  } catch (err) {
+    console.error(`Failed to fetch blogs with ID ${id}`, err);
+    throw new Error("An error occurred while fetching the blogs.");
+  }
+}
+
+export async function createBlog(blog: BlogPost) {
+  const currentUser = await getCurrentUser();
+
+  try {
+    await authClient.request(
+      createItem("blogs", { ...blog, userId: currentUser.id })
+    );
+  } catch (err) {
+    console.error("Failed to create blogs", err);
+    throw new Error("An error occurred while creating the blogs.");
+  }
+}
+
+export async function updateBlog(id: number, updatedBlog: Partial<BlogPost>) {
+  try {
+    await authClient.request(updateItem("blogs", id, updatedBlog));
+  } catch (err) {
+    console.error("Failed to update blog", err);
+    throw new Error("An error occurred while updating the blog.");
+  }
+}
+
+export async function deleteBlog(id: number) {
+  try {
+    await authClient.request(deleteItem("blogs", id));
+  } catch (err) {
+    console.error("Failed to delete blog", err);
+    throw new Error("An error occurred while deleting the blog.");
+  }
+}

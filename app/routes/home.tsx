@@ -1,6 +1,7 @@
 import BlogItem from "~/components/blogItem";
 import type { Route } from "./+types/home";
-import { getAllBlogs, type Blog } from "~/.server/blogs";
+import { blogs } from "~/types/blog";
+import { Box, Grid, Text, Title } from "@mantine/core";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -9,23 +10,28 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const blogs: Blog[] = await getAllBlogs();
-
-  return blogs;
-}
-
 export default function Home({ loaderData }: Route.ComponentProps) {
-  const blogs = loaderData;
-
   return (
-    <div>
-      <h1>All Published Blogs</h1>
+    <div style={{ paddingBlock: "10px" }}>
+      <Title order={1} ta="center" style={{ paddingBlock: "20px" }}>
+        All Published Blogs
+      </Title>
 
       {blogs?.length === 0 ? (
         <p>No Blogs</p>
       ) : (
-        blogs?.map((blog) => <BlogItem key={blog.id} blog={blog} />)
+        <Box
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            gap: "32px",
+          }}
+        >
+          {blogs?.map((blog) => (
+            <BlogItem key={blog.id} blog={blog} />
+          ))}
+        </Box>
       )}
     </div>
   );

@@ -1,6 +1,6 @@
 import { createDirectus, rest, authentication } from "@directus/sdk";
 
-const API_URL = process.env.DIRECTUS_URL;
+export const API_URL = process.env.DIRECTUS_URL;
 
 if (!API_URL) throw new Error("No API URL FOUND");
 

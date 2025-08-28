@@ -1,25 +1,66 @@
+import {
+  ActionIcon,
+  AspectRatio,
+  Avatar,
+  Badge,
+  Card,
+  CardSection,
+  Center,
+  Group,
+  Image,
+  Text,
+} from "@mantine/core";
 import { Link } from "react-router";
-import type { Blog } from "~/.server/blogs";
+import type { FullBlog } from "~/types/blog";
+import { RxAvatar } from "react-icons/rx";
 
-const BlogItem = ({ blog }: { blog: Blog }) => {
+const BlogItem = ({ blog }: { blog: FullBlog }) => {
   return (
     <Link
       to={`/blog/${blog.id}`}
       style={{ textDecoration: "none", color: "inherit" }}
     >
-      <div
-        style={{
-          border: "1px solid #ccc",
-          padding: "1rem",
-          marginBottom: "1rem",
-        }}
+      <Card
+        radius="md"
+        shadow="lg"
+        w="100%"
+        maw="384px"
+        miw="343px"
+        mah="580px"
+        mih="530px"
       >
-        <h2>{blog.title}</h2>
-        <p>{blog.content}</p>
-        <div>
-          <small>Created: {new Date(blog.date_created).toLocaleString()}</small>
-        </div>
-      </div>
+        <CardSection>
+          <AspectRatio ratio={2 / 1}>
+            <Image src={blog.imageUrl} />
+          </AspectRatio>
+        </CardSection>
+
+        <Badge variant="light" my="sm">
+          {blog.status}
+        </Badge>
+
+        <Text my="sm" fw={600}>
+          {blog.title}
+        </Text>
+
+        <Text fz="sm" c="dimmed" lineClamp={6}>
+          {blog.content}
+        </Text>
+
+        <Group mt="auto">
+          <Center>
+            <Avatar size={40} radius="xl" mr="xs">
+              <RxAvatar />
+            </Avatar>
+            <div>
+              <Text fw={500}>{blog.author}</Text>
+              <Text fz="xs" c="gray">
+                {blog.date_created}
+              </Text>
+            </div>
+          </Center>
+        </Group>
+      </Card>
     </Link>
   );
 };
