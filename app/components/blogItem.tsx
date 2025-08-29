@@ -67,7 +67,7 @@ const BlogItem = ({ blog }: { blog: FullBlog }) => {
                 By {"{"} Author Name {"}"}
               </Text>
               <Text fz="xs" c="gray">
-                {blog.date_created}
+                {new Date(blog.date_created).toLocaleDateString()}
               </Text>
             </div>
           </Center>

@@ -9,7 +9,7 @@ import {
   Textarea,
   TextInput,
 } from "@mantine/core";
-import { Form } from "react-router";
+import { Form, useNavigate } from "react-router";
 import type { FullBlog } from "~/types/blog";
 
 type BlogFormProps = {
@@ -18,8 +18,13 @@ type BlogFormProps = {
 };
 
 const BlogForm = ({ blog, error }: BlogFormProps) => {
+  const navigate = useNavigate();
+
   return (
     <Container size="md" py="xl">
+      <Button variant="outline" mb="md" onClick={() => navigate(-1)}>
+        Back
+      </Button>
       <Form method="post">
         <Stack gap="md">
           {error && (
