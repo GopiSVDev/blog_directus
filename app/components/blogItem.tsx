@@ -36,7 +36,7 @@ const BlogItem = ({ blog }: { blog: FullBlog }) => {
                 blog.imageUrl ||
                 "https://placehold.co/800x400?text=No+Image+Available"
               }
-              alt="Image Not Available"
+              alt="Image Loading"
             />
           </AspectRatio>
         </CardSection>
