@@ -29,7 +29,15 @@ const BlogItem = ({ blog }: { blog: FullBlog }) => {
       >
         <CardSection>
           <AspectRatio ratio={2 / 1}>
-            <Image src={blog.imageUrl} alt="Image Not Available" />
+            <Image
+              maw="384px"
+              h="192px"
+              src={
+                blog.imageUrl ||
+                "https://placehold.co/800x400?text=No+Image+Available"
+              }
+              alt="Image Not Available"
+            />
           </AspectRatio>
         </CardSection>
 

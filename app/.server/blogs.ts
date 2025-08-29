@@ -10,6 +10,36 @@ import {
 import { getUserSession } from "./session";
 import type { BlogPost, FullBlog } from "~/types/blog";
 
+// Public - No Auth Functions
+
+export async function fetchAllBlogs() {
+  try {
+    const res = await client.request(
+      readItems("blogs", { filter: { status: { _eq: "published" } } })
+    );
+
+    return res as FullBlog[] | [];
+  } catch (err) {
+    console.error("Failed to fetch blogs", err);
+    throw new Error("An error occurred while fetching blogs.");
+  }
+}
+
+export async function getBlogById(id: number) {
+  try {
+    const res = await client.request(
+      readItem("blogs", id, { filter: { status: { _eq: "published" } } })
+    );
+
+    return res as FullBlog;
+  } catch (err) {
+    console.error(`Failed to fetch blogs with ID ${id}`, err);
+    throw new Error("An error occurred while fetching the blogs.");
+  }
+}
+
+// Authenticated Functions
+
 async function getAccessToken(request: Request) {
   const { session } = await getUserSession(request);
   if (!session) throw new Error("Not logged in");
@@ -29,50 +59,45 @@ async function getCurrentUser() {
   }
 }
 
-export async function fetchAllBlogs() {
-  try {
-    const res = await client.request(
-      readItems("blogs", { filter: { status: { _eq: "published" } } })
-    );
-
-    return res as FullBlog[] | [];
-  } catch (err) {
-    console.error("Failed to fetch blogs", err);
-    throw new Error("An error occurred while fetching blogs.");
-  }
-}
-
 export async function fetchUserBlogs(request: Request) {
   await getAccessToken(request);
 
   const currentUser = await getCurrentUser();
   try {
-    return await authClient.request(
+    const res = await authClient.request(
       readItems("blogs", { filter: { author: { _eq: currentUser.id } } })
     );
+
+    return res;
   } catch (err) {
     console.error("Failed to fetch blogs", err);
     throw new Error("An error occurred while fetching blogs.");
   }
 }
 
-export async function getBlogById(id: number) {
+export async function fetchUserBlogById(id: number, request: Request) {
+  await getAccessToken(request);
+  const currentUser = await getCurrentUser();
+
   try {
-    return await client.request(
-      readItem("blogs", id, { filter: { status: { _eq: "published" } } })
+    const res = await authClient.request(
+      readItem("blogs", id, { filter: { author: { _eq: currentUser.id } } })
     );
+
+    return res as FullBlog;
   } catch (err) {
     console.error(`Failed to fetch blogs with ID ${id}`, err);
     throw new Error("An error occurred while fetching the blogs.");
   }
 }
 
-export async function createBlog(blog: BlogPost) {
+export async function createBlog(blog: BlogPost, request: Request) {
+  await getAccessToken(request);
   const currentUser = await getCurrentUser();
 
   try {
     await authClient.request(
-      createItem("blogs", { ...blog, userId: currentUser.id })
+      createItem("blogs", { ...blog, author: currentUser.id })
     );
   } catch (err) {
     console.error("Failed to create blogs", err);

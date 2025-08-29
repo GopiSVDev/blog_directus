@@ -37,7 +37,6 @@ export async function action({ request }: Route.ActionArgs) {
     session.set("refreshToken", refresh_token ?? "");
     session.set("expiresAt", Date.now() + (expires ?? 0));
 
-    console.log("Login Success. Access token:", access_token);
     return redirect("/", {
       headers: {
         "Set-Cookie": await commitSession(session),

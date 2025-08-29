@@ -43,16 +43,17 @@ const BlogPage = ({ loaderData }: { loaderData: FullBlog | undefined }) => {
       </Button>
 
       <Card shadow="sm" radius="md" p="lg">
-        {blog.imageUrl && (
-          <Image
-            src={blog.imageUrl}
-            alt={blog.title}
-            height={400}
-            mb="md"
-            radius="md"
-            fit="cover"
-          />
-        )}
+        <Image
+          src={
+            blog.imageUrl ||
+            "https://placehold.co/800x400?text=No+Image+Available"
+          }
+          alt={blog.title}
+          height={400}
+          mb="md"
+          radius="md"
+          fit="cover"
+        />
 
         <Stack gap="sm">
           <Group align="center">

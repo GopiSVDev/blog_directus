@@ -7,7 +7,7 @@ import {
   Stack,
   Container,
 } from "@mantine/core";
-import { Link, redirect, useNavigate } from "react-router";
+import { Form, Link, redirect } from "react-router";
 import { fetchUserBlogs } from "~/.server/blogs";
 import type { Route } from "../+types/home";
 
@@ -22,7 +22,6 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export const Dashboard = ({ loaderData }: Route.ComponentProps) => {
-  const navigate = useNavigate();
   const blogs = loaderData;
 
   return (
@@ -71,9 +70,28 @@ export const Dashboard = ({ loaderData }: Route.ComponentProps) => {
                         </Button>
                       </Link>
 
-                      <Button size="xs" color="red" variant="outline">
-                        Delete
-                      </Button>
+                      <Form
+                        method="post"
+                        action={`/dashboard/delete/${blog.id}`}
+                        onSubmit={(e) => {
+                          if (
+                            !window.confirm(
+                              "Are you sure you want to delete this blog?"
+                            )
+                          ) {
+                            e.preventDefault();
+                          }
+                        }}
+                      >
+                        <Button
+                          type="submit"
+                          size="xs"
+                          color="red"
+                          variant="outline"
+                        >
+                          Delete
+                        </Button>
+                      </Form>
                     </Group>
                   </Table.Td>
                 </Table.Tr>

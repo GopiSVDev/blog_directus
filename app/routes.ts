@@ -18,6 +18,7 @@ export default [
       index("routes/dashboard/dashboard.tsx"),
       route("create", "routes/dashboard/dashboard.create.tsx"),
       route("edit/:id", "routes/dashboard/dashboard.edit.$id.tsx"),
+      route("delete/:id", "routes/dashboard/dashboard.delete.$id.tsx"),
     ]),
   ]),
 ] satisfies RouteConfig;
