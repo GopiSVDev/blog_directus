@@ -32,14 +32,16 @@ const BlogForm = ({ blog, error }: BlogFormProps) => {
               {error}
             </Alert>
           )}
-          {blog?.imageUrl && (
-            <Image
-              src={blog.imageUrl}
-              alt={blog.title}
-              height={250}
-              radius="md"
-            />
-          )}
+
+          <Image
+            src={
+              blog?.imageUrl ||
+              "https://placehold.co/800x400?text=No+Image+Available"
+            }
+            alt={blog?.title || "Placeholder Image"}
+            height={250}
+            radius="md"
+          />
 
           <TextInput
             label="Title"
