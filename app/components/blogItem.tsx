@@ -19,14 +19,7 @@ const BlogItem = ({ blog }: { blog: FullBlog }) => {
       to={`/blog/${blog.id}`}
       style={{ textDecoration: "none", color: "inherit" }}
     >
-      <Card
-        radius="md"
-        shadow="lg"
-        w="100%"
-        maw="384px"
-        mah="580px"
-        mih="530px"
-      >
+      <Card radius="md" shadow="lg" w="100%" maw="384px" mih="530px">
         <CardSection>
           <AspectRatio ratio={2 / 1}>
             <Image

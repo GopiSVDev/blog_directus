@@ -1,4 +1,4 @@
-import { Anchor, Container, Group } from "@mantine/core";
+import { Anchor, Box, Container, Group } from "@mantine/core";
 
 const Footer = () => {
   const links = [
@@ -10,7 +10,7 @@ const Footer = () => {
   ];
 
   return (
-    <div style={{ marginTop: "20px", borderTop: "1px solid black" }}>
+    <Box mt="20px" style={{ borderTop: "1px solid black" }}>
       <Container maw="1440px">
         <div
           style={{
@@ -36,7 +36,7 @@ const Footer = () => {
           </Group>
         </div>
       </Container>
-    </div>
+    </Box>
   );
 };
 

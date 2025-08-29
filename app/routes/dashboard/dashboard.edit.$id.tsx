@@ -1,15 +1,5 @@
-import {
-  Container,
-  Stack,
-  TextInput,
-  Textarea,
-  Button,
-  Group,
-  Title,
-  Image,
-  Text,
-} from "@mantine/core";
-import { Form, redirect, useNavigate } from "react-router";
+import { Container } from "@mantine/core";
+import { redirect } from "react-router";
 import type { Route } from "../+types/home";
 import { fetchUserBlogById, updateBlog } from "~/.server/blogs";
 import type { BlogStatus, FullBlog } from "~/types/blog";
@@ -45,7 +35,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   const updatedBlog = { ...blog, title, content, imageUrl, status };
 
-  updateBlog(parseInt(id), updatedBlog);
+  updateBlog(parseInt(id), updatedBlog, request);
 
   return redirect("/dashboard");
 }

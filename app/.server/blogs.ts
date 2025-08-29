@@ -105,7 +105,12 @@ export async function createBlog(blog: BlogPost, request: Request) {
   }
 }
 
-export async function updateBlog(id: number, updatedBlog: Partial<BlogPost>) {
+export async function updateBlog(
+  id: number,
+  updatedBlog: Partial<BlogPost>,
+  request: Request
+) {
+  await getAccessToken(request);
   try {
     await authClient.request(updateItem("blogs", id, updatedBlog));
   } catch (err) {
@@ -114,7 +119,8 @@ export async function updateBlog(id: number, updatedBlog: Partial<BlogPost>) {
   }
 }
 
-export async function deleteBlog(id: number) {
+export async function deleteBlog(id: number, request: Request) {
+  await getAccessToken(request);
   try {
     await authClient.request(deleteItem("blogs", id));
   } catch (err) {
