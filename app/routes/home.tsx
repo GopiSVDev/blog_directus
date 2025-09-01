@@ -1,7 +1,7 @@
 import BlogItem from "~/components/blogItem";
 import type { Route } from "./+types/home";
 import { Box, Text, Title } from "@mantine/core";
-import { fetchAllBlogs } from "~/.server/blogs";
+import { fetchAllBlogs, fetchUserDetails } from "~/.server/blogs";
 import type { FullBlog } from "~/types/blog";
 
 export function meta({}: Route.MetaArgs) {
@@ -14,7 +14,19 @@ export function meta({}: Route.MetaArgs) {
 export async function loader() {
   try {
     const blogs = await fetchAllBlogs();
-    return blogs;
+    const enrichedBlogs = await Promise.all(
+      blogs.map(async (blog) => {
+        const user = await fetchUserDetails(blog.author);
+        return {
+          ...blog,
+          author: user?.email || "Unknown",
+        };
+      })
+    );
+
+    console.log(enrichedBlogs);
+
+    return enrichedBlogs;
   } catch (error) {
     console.error("Failed to load blogs:", error);
     return [];

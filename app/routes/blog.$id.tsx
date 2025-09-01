@@ -1,4 +1,4 @@
-import { getBlogById } from "~/.server/blogs";
+import { fetchUserDetails, getBlogById } from "~/.server/blogs";
 import type { Route } from "../+types/root";
 import { redirect, useNavigate } from "react-router";
 import type { FullBlog } from "~/types/blog";
@@ -20,10 +20,11 @@ export async function loader({ params }: Route.LoaderArgs) {
     if (!params.id) return redirect("/");
 
     const blog = await getBlogById(parseInt(params.id));
+    const user = await fetchUserDetails(blog.author);
 
     if (!blog) return redirect("/");
 
-    return blog;
+    return { ...blog, author: user?.email || "Unknown" };
   } catch (error) {
     console.error("Failed to load blog:", error);
     return redirect("/");
@@ -67,7 +68,7 @@ const BlogPage = ({ loaderData }: { loaderData: FullBlog | undefined }) => {
           </Group>
 
           <Text c="dimmed" size="sm">
-            By {"{"} Author Name {"}"} |{" "}
+            By {blog.author}
             {new Date(blog.date_created).toLocaleDateString()}
           </Text>
 

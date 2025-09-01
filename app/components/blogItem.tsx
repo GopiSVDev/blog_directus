@@ -56,9 +56,7 @@ const BlogItem = ({ blog }: { blog: FullBlog }) => {
               <RxAvatar />
             </Avatar>
             <div>
-              <Text fw={500}>
-                By {"{"} Author Name {"}"}
-              </Text>
+              <Text fw={500}>By {blog.author}</Text>
               <Text fz="xs" c="gray">
                 {new Date(blog.date_created).toLocaleDateString()}
               </Text>

@@ -5,6 +5,7 @@ import {
   readItem,
   readItems,
   readMe,
+  readUsers,
   updateItem,
 } from "@directus/sdk";
 import { getUserSession } from "./session";
@@ -88,6 +89,18 @@ export async function fetchUserBlogById(id: number, request: Request) {
   } catch (err) {
     console.error(`Failed to fetch blogs with ID ${id}`, err);
     throw new Error("An error occurred while fetching the blogs.");
+  }
+}
+
+export async function fetchUserDetails(id: string) {
+  try {
+    const users = await client.request(readUsers());
+    console.log(users);
+
+    return users.find((user) => user.id === id);
+  } catch (err) {
+    console.error(`Failed to fetch user details with ID ${id}`, err);
+    throw new Error("An error occurred while fetching the user details.");
   }
 }
 
