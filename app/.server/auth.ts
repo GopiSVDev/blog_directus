@@ -8,11 +8,18 @@ import type { AuthenticationData } from "@directus/sdk";
 import { authClient, client } from "~/.server/directus";
 
 interface AuthData {
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
 }
 
-export const register = async ({ email, password }: AuthData) => {
+export const register = async ({
+  firstName,
+  lastName,
+  email,
+  password,
+}: AuthData) => {
   try {
     const users = await client.request(readUsers());
     const exists = users.some((user) => user.email === email);
@@ -21,7 +28,12 @@ export const register = async ({ email, password }: AuthData) => {
       throw new Error("Email already exists");
     }
 
-    await client.request(registerUser(email, password));
+    await client.request(
+      registerUser(email, password, {
+        first_name: firstName,
+        last_name: lastName,
+      })
+    );
   } catch (error) {
     console.error("Registration failed:", error);
     throw error instanceof Error ? error : new Error("Registration failed");

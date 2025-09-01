@@ -20,11 +20,11 @@ export async function loader({ params }: Route.LoaderArgs) {
     if (!params.id) return redirect("/");
 
     const blog = await getBlogById(parseInt(params.id));
-    const user = await fetchUserDetails(blog.author);
+    const authorDisplayName = await fetchUserDetails(blog.author);
 
     if (!blog) return redirect("/");
 
-    return { ...blog, author: user?.email || "Unknown" };
+    return { ...blog, author: authorDisplayName };
   } catch (error) {
     console.error("Failed to load blog:", error);
     return redirect("/");
