@@ -24,11 +24,13 @@ export async function loader({ request }: Route.LoaderArgs) {
 export async function action({ request }: Route.ActionArgs) {
   let formData = await request.formData();
 
+  const firstName = formData.get("firstName")?.toString() || "";
+  const lastName = formData.get("lastName")?.toString() || "";
   const email = formData.get("email")?.toString() || "";
   const password = formData.get("password")?.toString() || "";
 
   try {
-    await register({ email, password });
+    await register({ firstName, lastName, email, password });
     return redirect("/login");
   } catch (error) {
     return {
@@ -70,6 +72,20 @@ const SignUp = () => {
               {actionData.error}
             </Box>
           )}
+
+          <TextInput
+            label="First Name"
+            name="firstName"
+            placeholder="John"
+            required
+          />
+
+          <TextInput
+            label="Last Name"
+            name="lastName"
+            placeholder="Doe"
+            required
+          />
 
           <TextInput
             label="Email"

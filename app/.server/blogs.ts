@@ -95,9 +95,17 @@ export async function fetchUserBlogById(id: number, request: Request) {
 export async function fetchUserDetails(id: string) {
   try {
     const users = await client.request(readUsers());
-    console.log(users);
+    const user = users.find((user) => user.id === id);
 
-    return users.find((user) => user.id === id);
+    if (!user) return "Unknown";
+
+    const { first_name, last_name, email } = user;
+
+    if (first_name || last_name) {
+      return `${first_name ?? ""} ${last_name ?? ""}`.trim();
+    }
+
+    return email;
   } catch (err) {
     console.error(`Failed to fetch user details with ID ${id}`, err);
     throw new Error("An error occurred while fetching the user details.");

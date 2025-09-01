@@ -16,15 +16,13 @@ export async function loader() {
     const blogs = await fetchAllBlogs();
     const enrichedBlogs = await Promise.all(
       blogs.map(async (blog) => {
-        const user = await fetchUserDetails(blog.author);
+        const displayName = await fetchUserDetails(blog.author);
         return {
           ...blog,
-          author: user?.email || "Unknown",
+          author: displayName,
         };
       })
     );
-
-    console.log(enrichedBlogs);
 
     return enrichedBlogs;
   } catch (error) {
